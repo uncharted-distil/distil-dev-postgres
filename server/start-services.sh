@@ -1,0 +1,2 @@
+echo "Runnnig postgres"
+postgres&
