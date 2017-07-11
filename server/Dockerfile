@@ -1,6 +1,8 @@
 # Set the base image to postgres alpine
 FROM postgres:10-alpine
 
+ADD init.sql /docker-entrypoint-initdb.d/
+
 # make sure package db is up to date
 RUN apk update
 
@@ -29,7 +31,8 @@ ADD data /input
 # start postgres and run ingest
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/e1f115e4ca285c3c24e847c4dd4be955e0ed51c2/wait-for-it.sh /
 RUN /docker-entrypoint.sh postgres -p /tmp/epid & \
-  /bin/bash /wait-for-it.sh -t 0 localhost:9200 -- /ingest.sh; \
+  /bin/bash /wait-for-it.sh -t 0 localhost:5432 -- psql -U postgres -f /docker-entrypoint-initdb.d/init.sql; \
+  /distil-ingest/ingest.sh; \
   kill $(cat /tmp/epid) && wait $(cat /tmp/epid); \
   exit 0;
 

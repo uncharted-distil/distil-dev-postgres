@@ -8,5 +8,6 @@ echo $DATASETS
 
 for dataset in "${DATASETS[@]}"
 do
-    ./distil-ingest -database=distil -db-table $dataset -db-user=distil -db-password=gopher!! -clear-existing -dataset-path /input/$dataset
+    ds=${dataset/_}
+    ./distil-ingest -database=distil -db-table $ds -db-user=distil -db-password=gopher! -clear-existing -dataset-path /input/$dataset
 done
