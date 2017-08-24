@@ -1,7 +1,16 @@
 # Set the base image to postgres alpine
 FROM postgres:10-alpine
 
+# Update postgres to use a new data folder.
+RUN mkdir -p /usr/local/pgsql/data
+RUN chown -R postgres:postgres /usr/local/pgsql/data
+RUN chmod 700 /usr/local/pgsql/data
+
+ENV PGDATA="/usr/local/pgsql/data"
+
+ADD postgres-init.sh /
 ADD init.sql /docker-entrypoint-initdb.d/
+RUN /postgres-init.sh -p 5432:5432 -d postgres
 
 # make sure package db is up to date
 RUN apk update

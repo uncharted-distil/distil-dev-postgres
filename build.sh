@@ -9,7 +9,7 @@ echo -e "${HIGHLIGHT}Getting distil-ingest..${NC}"
 
 # get distil-ingest and force a static rebuild of it so that it can run on Alpine
 go get -u -v github.com/unchartedsoftware/distil-ingest
-CGO_ENABLED=0 go build -v -installsuffix cgo github.com/unchartedsoftware/distil-ingest
+CGO_ENABLED=0 go build -v -installsuffix cgo github.com/unchartedsoftware/distil-ingest/cmd/distil-ingest
 mv distil-ingest ./server
 
 # copy the d3m data into the docker context
