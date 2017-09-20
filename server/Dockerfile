@@ -23,6 +23,9 @@ RUN mkdir -p /distil-ingest
 WORKDIR /distil-ingest
 ADD config.sh .
 ADD distil-ingest .
+ADD distil-merge .
+ADD distil-rank .
+ADD distil-classify .
 ADD ingest.sh .
 
 # copy in d3m test data
