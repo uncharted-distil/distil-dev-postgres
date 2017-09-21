@@ -1,6 +1,16 @@
 # Set the base image to postgres alpine
 FROM postgres:10-alpine
 
+ARG aws_access_key
+ARG aws_secret_key
+ARG aws_region
+ARG smmry_key
+
+ENV AWS_ACCESS_KEY=$aws_access_key
+ENV AWS_SECRET_KEY=$aws_secret_key
+ENV AWS_REGION=$aws_region
+ENV SMMRY_API_KEY=$smmry_key
+
 # Update postgres to use a new data folder.
 RUN mkdir -p /usr/local/pgsql/data
 RUN chown -R postgres:postgres /usr/local/pgsql/data
@@ -23,6 +33,9 @@ RUN mkdir -p /distil-ingest
 WORKDIR /distil-ingest
 ADD config.sh .
 ADD distil-ingest .
+ADD distil-merge .
+ADD distil-rank .
+ADD distil-classify .
 ADD ingest.sh .
 
 # copy in d3m test data
