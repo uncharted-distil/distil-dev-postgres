@@ -85,8 +85,8 @@ do
     ./distil-ingest \
         --database=distil \
         --db-table="$DATASET" \
-        --db-user=distil
-        --db-password=gopher!
+        --db-user=distil \
+        --db-password=gopher! \
         --schema="$CONTAINER_DATA_DIR/$DATASET/$SCHEMA_PATH" \
         --dataset="$CONTAINER_DATA_DIR/$DATASET/$MERGED_OUTPUT_PATH" \
         --classification="$CONTAINER_DATA_DIR/$DATASET/$CLASSIFICATION_OUTPUT_PATH" \

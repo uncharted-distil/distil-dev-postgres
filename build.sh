@@ -24,7 +24,7 @@ mv distil-ingest ./server
 # copy the d3m data into the docker context
 echo -e "${HIGHLIGHT}Copying D3M data..${NC}"
 mkdir -p ./server/data/d3m
-for dataset in "${DATASETS[@]}"
+for DATASET in "${DATASETS[@]}"
 do
     echo "cp $HOST_DATA_DIR/$DATASET into ./server/data/d3m/$DATASET"
     cp -r $HOST_DATA_DIR/$DATASET ./server/data/d3m
