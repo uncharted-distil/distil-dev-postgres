@@ -45,6 +45,7 @@ do
     echo " Classifying $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
     ./distil-classify \
+        --schema="$CONTAINER_DATA_DIR/$DATASET/$SCHEMA_PATH" \
         --kafka-endpoints="$CLASSIFICATION_KAFKA_ENDPOINT" \
         --dataset="$AWS_S3_HOST/$AWS_S3_BUCKET/$AWS_S3_KEY_PREFIX/$DATASET$AWS_S3_KEY_SUFFIX" \
         --output="$CONTAINER_DATA_DIR/$DATASET/$CLASSIFICATION_OUTPUT_PATH"
