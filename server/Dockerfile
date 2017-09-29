@@ -57,3 +57,5 @@ RUN rm -r -f /distil-ingest; \
 
 # expose standard ports
 EXPOSE 5432
+
+USER postgres

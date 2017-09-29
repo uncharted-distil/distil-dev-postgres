@@ -2,7 +2,7 @@
 
 # name and version of docker image that will be created
 DOCKER_IMAGE_NAME=distil_dev_postgres
-DOCKER_IMAGE_VERSION=0.3.5
+DOCKER_IMAGE_VERSION=0.3.6
 
 # datasets to ingest
 DATASETS=(o_185 o_196 o_313 o_38 o_4550)
