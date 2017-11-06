@@ -1,3 +1,6 @@
 server/data
 distil-ingest
+distil-classify
+distil-merge
+distil-rank
 .DS_Store

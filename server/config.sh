@@ -2,10 +2,10 @@
 
 # name and version of docker image that will be created
 DOCKER_IMAGE_NAME=distil_dev_postgres
-DOCKER_IMAGE_VERSION=0.4.2
+DOCKER_IMAGE_VERSION=0.5.0
 
 # datasets to ingest
-DATASETS=(o_185 o_196 o_313 o_38 o_4550)
+DATASETS=(r_26 r_27 r_32 r_60 o_185 o_196 o_313 o_38 o_4550)
 
 # path to data on local system (ingest from HDFS not currently supported)
 HOST_DATA_DIR=~/data/d3m
