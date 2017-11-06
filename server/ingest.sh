@@ -83,6 +83,7 @@ done
 METADATA_INDEX=datasets
 ES_ENDPOINT=http://localhost:9200
 SUMMARY_OUTPUT_PATH=summary.txt
+TYPE_SOURCE=classification
 
 for DATASET in "${DATASETS[@]}"
 do
