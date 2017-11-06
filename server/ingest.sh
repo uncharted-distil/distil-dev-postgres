@@ -32,8 +32,7 @@ do
         --output-bucket="$AWS_S3_BUCKET" \
         --output-key="$AWS_S3_KEY_PREFIX/$DATASET$AWS_S3_KEY_SUFFIX" \
         --output-path="$CONTAINER_DATA_DIR/$DATASET/$MERGED_OUTPUT_PATH" \
-        --has-header=$MERGE_HAS_HEADER \
-        --include-header=$MERGE_INCLUDE_HEADER
+        --has-header=$MERGE_HAS_HEADER
 done
 
 CLASSIFICATION_OUTPUT_PATH=/data/classification.json
@@ -69,7 +68,6 @@ do
         --output-bucket="$AWS_RANK_OUTPUT_BUCKET" \
         --output-key="$AWS_RANK_OUTPUT_KEY_PREFIX/$DATASET$AWS_RANK_OUTPUT_KEY_SUFFIX" \
         --has-header=$MERGE_HAS_HEADER \
-        --include-header=$MERGE_INCLUDE_HEADER \
         --kafka-endpoints="$RANKING_KAFKA_ENDPOINT" \
         --output="$CONTAINER_DATA_DIR/$DATASET/$IMPORTANCE_OUTPUT"
 done
