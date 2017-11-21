@@ -12,12 +12,6 @@ TRAINING_TARGETS_PATH=/data/trainTargets.csv
 RAW_DATA=/data/raw_data
 MERGED_OUTPUT_PATH=/data/merged.csv
 OUTPUT_SCHEMA=/data/mergedDataSchema.json
-
-AWS_S3_HOST=https://s3.amazonaws.com/
-AWS_S3_BUCKET=d3m-data
-AWS_S3_KEY_PREFIX=merged_o_data
-AWS_S3_KEY_SUFFIX=_merged.csv
-
 MERGE_HAS_HEADER=1
 
 
@@ -31,8 +25,6 @@ do
         --training-data="$CONTAINER_DATA_DIR/$DATASET/$TRAINING_DATA_PATH" \
         --training-targets="$CONTAINER_DATA_DIR/$DATASET/$TRAINING_TARGETS_PATH" \
         --raw-data="$CONTAINER_DATA_DIR/$DATASET/$RAW_DATA" \
-        --output-bucket="$AWS_S3_BUCKET" \
-        --output-key="$AWS_S3_KEY_PREFIX/$DATASET$AWS_S3_KEY_SUFFIX" \
         --output-path="$CONTAINER_DATA_DIR/$DATASET/$MERGED_OUTPUT_PATH" \
         --output-schema-path="$CONTAINER_DATA_DIR/$DATASET/$OUTPUT_SCHEMA" \
         --has-header=$MERGE_HAS_HEADER \
@@ -40,7 +32,8 @@ do
 done
 
 CLASSIFICATION_OUTPUT_PATH=/data/classification.json
-CLASSIFICATION_KAFKA_ENDPOINT=10.108.4.41:9092
+REST_ENDPOINT=http://localhost:5000
+CLASSIFICATION_FUNCTION=fileUpload
 
 for DATASET in "${DATASETS[@]}"
 do
@@ -49,17 +42,17 @@ do
     echo "--------------------------------------------------------------------------------"
     ./distil-classify \
         --schema="$CONTAINER_DATA_DIR/$DATASET/$OUTPUT_SCHEMA" \
-        --kafka-endpoints="$CLASSIFICATION_KAFKA_ENDPOINT" \
-        --dataset="$AWS_S3_HOST/$AWS_S3_BUCKET/$AWS_S3_KEY_PREFIX/$DATASET$AWS_S3_KEY_SUFFIX" \
+        --rest-endpoint="$REST_ENDPOINT" \
+        --classification-function="$CLASSIFICATION_FUNCTION" \
+        --dataset="$CONTAINER_DATA_DIR/$DATASET/$MERGED_OUTPUT_PATH" \
         --output="$CONTAINER_DATA_DIR/$DATASET/$CLASSIFICATION_OUTPUT_PATH" \
         --include-raw-dataset
 done
 
-AWS_RANK_OUTPUT_BUCKET=d3m-data
-AWS_RANK_OUTPUT_KEY_PREFIX=numeric_o_data
-AWS_RANK_OUTPUT_KEY_SUFFIX=_numeric.csv
-RANKING_KAFKA_ENDPOINT=10.108.4.41:9092
 IMPORTANCE_OUTPUT=/data/importance.json
+RANKING_REST_ENDPOINT=HTTP://localhost:5001
+RANKING_FUNCTION=pca
+NUMERIC_OUTPUT_SUFFIX=_numeric.csv
 TYPE_SOURCE=classification
 
 for DATASET in "${DATASETS[@]}"
@@ -70,11 +63,11 @@ do
     ./distil-rank \
         --schema="$CONTAINER_DATA_DIR/$DATASET/$OUTPUT_SCHEMA" \
         --dataset="$CONTAINER_DATA_DIR/$DATASET/$MERGED_OUTPUT_PATH" \
+        --rest-endpoint="$RANKING_REST_ENDPOINT" \
+        --ranking-function="$RANKING_FUNCTION" \
+        --numeric-output="$CONTAINER_DATA_DIR/$DATASET/$DATASET_DATA_DIR/$DATASET$NUMERIC_OUTPUT_SUFFIX" \
         --classification="$CONTAINER_DATA_DIR/$DATASET/$CLASSIFICATION_OUTPUT_PATH" \
-        --output-bucket="$AWS_RANK_OUTPUT_BUCKET" \
-        --output-key="$AWS_RANK_OUTPUT_KEY_PREFIX/$DATASET$AWS_RANK_OUTPUT_KEY_SUFFIX" \
         --has-header=$MERGE_HAS_HEADER \
-        --kafka-endpoints="$RANKING_KAFKA_ENDPOINT" \
         --output="$CONTAINER_DATA_DIR/$DATASET/$IMPORTANCE_OUTPUT" \
         --type-source="$TYPE_SOURCE" \
         --include-raw-dataset
