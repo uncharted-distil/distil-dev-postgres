@@ -33,10 +33,7 @@ done
 
 echo -e "${HIGHLIGHT}Building image ${DOCKER_IMAGE_NAME}...${NC}"
 cd server
-docker build \
-    --build-arg aws_access_key=$AWS_ACCESS_KEY \
-    --build-arg aws_secret_key=$AWS_SECRET_KEY \
-    --build-arg aws_region=$AWS_REGION  \
+docker build --no-cache --network=host \
     --build-arg smmry_key=$SMMRY_API_KEY  \
     -t docker.uncharted.software/$DOCKER_IMAGE_NAME:${DOCKER_IMAGE_VERSION} -t docker.uncharted.software/$DOCKER_IMAGE_NAME:latest .
 cd ..
