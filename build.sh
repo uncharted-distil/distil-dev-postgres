@@ -12,14 +12,17 @@ go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-merge
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-classify
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-rank
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-ingest
+go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-summary
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-merge
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-classify
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-rank
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-ingest
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-summary
 mv distil-merge ./server
 mv distil-classify ./server
 mv distil-rank ./server
 mv distil-ingest ./server
+mv distil-summary ./server
 
 # copy the d3m data into the docker context
 echo -e "${HIGHLIGHT}Copying D3M data..${NC}"

@@ -76,13 +76,12 @@ SUMMARY_MACHINE_OUTPUT=/tables/summary-machine.json
 SUMMARY_REST_ENDPOINT=HTTP://10.108.4.42:5001
 SUMMARY_FUNCTION=fileUpload
 
-
 for DATASET in "${DATASETS[@]}"
 do
     echo "--------------------------------------------------------------------------------"
     echo " Summarizing $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
-    ./distil-ingest \
+    ./distil-summary \
         --rest-endpoint="$SUMMARY_REST_ENDPOINT" \
         --summary-function="$SUMMARY_FUNCTION" \
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$MERGED_OUTPUT_HEADER_PATH" \
