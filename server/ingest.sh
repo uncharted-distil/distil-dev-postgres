@@ -82,7 +82,7 @@ do
     echo "--------------------------------------------------------------------------------"
     echo " Summarizing $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
-    go run cmd/distil-summary/main.go \
+    ./distil-ingest \
         --rest-endpoint="$SUMMARY_REST_ENDPOINT" \
         --summary-function="$SUMMARY_FUNCTION" \
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$MERGED_OUTPUT_HEADER_PATH" \
