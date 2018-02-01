@@ -30,6 +30,7 @@ ADD distil-ingest .
 ADD distil-merge .
 ADD distil-rank .
 ADD distil-classify .
+ADD distil-summary .
 ADD ingest.sh .
 
 # copy in d3m test data
