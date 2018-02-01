@@ -9,6 +9,7 @@ echo $DATASETS
 SCHEMA_PATH=/datasetDoc.json
 DATA_PATH=/tables/learningData.csv
 MERGED_OUTPUT_PATH=tables/merged.csv
+MERGED_OUTPUT_HEADER_PATH=tables/mergedHeader.csv
 OUTPUT_SCHEMA=tables/mergedDataSchema.json
 DATASET_FOLDER_SUFFIX=_dataset
 MERGE_HAS_HEADER=1
@@ -24,6 +25,7 @@ do
         --data="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$DATA_PATH" \
         --raw-data="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/" \
         --output-path="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$MERGED_OUTPUT_PATH" \
+        --output-path-header="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$MERGED_OUTPUT_HEADER_PATH" \
         --output-schema-path="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$OUTPUT_SCHEMA" \
         --has-header=$MERGE_HAS_HEADER
 done
@@ -70,6 +72,23 @@ do
         --type-source="$TYPE_SOURCE"
 done
 
+SUMMARY_MACHINE_OUTPUT=/tables/summary-machine.json
+SUMMARY_REST_ENDPOINT=HTTP://10.108.4.42:5001
+SUMMARY_FUNCTION=fileUpload
+
+
+for DATASET in "${DATASETS[@]}"
+do
+    echo "--------------------------------------------------------------------------------"
+    echo " Summarizing $DATASET dataset"
+    echo "--------------------------------------------------------------------------------"
+    go run cmd/distil-summary/main.go \
+        --rest-endpoint="$SUMMARY_REST_ENDPOINT" \
+        --summary-function="$SUMMARY_FUNCTION" \
+        --dataset="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$MERGED_OUTPUT_HEADER_PATH" \
+        --output="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$SUMMARY_MACHINE_OUTPUT"
+done
+
 METADATA_INDEX=datasets
 ES_ENDPOINT=http://localhost:9200
 SUMMARY_OUTPUT_PATH=summary.txt
@@ -89,6 +108,7 @@ do
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$MERGED_OUTPUT_PATH" \
         --classification="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$CLASSIFICATION_OUTPUT_PATH" \
         --summary="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$SUMMARY_OUTPUT_PATH" \
+        --summary-machine="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$SUMMARY_MACHINE_OUTPUT" \
         --importance="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$IMPORTANCE_OUTPUT" \
         --type-source="$TYPE_SOURCE" \
         --clear-existing
