@@ -40,7 +40,6 @@ do
     echo " Classifying $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
     ./distil-classify \
-        --schema="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$OUTPUT_SCHEMA" \
         --rest-endpoint="$REST_ENDPOINT" \
         --classification-function="$CLASSIFICATION_FUNCTION" \
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/${DATASET}$DATASET_FOLDER_SUFFIX/$MERGED_OUTPUT_PATH" \
