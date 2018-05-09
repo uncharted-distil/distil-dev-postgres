@@ -47,8 +47,7 @@ sleep 10
 
 echo -e "${HIGHLIGHT}Building image ${DOCKER_IMAGE_NAME}...${NC}"
 cd server
-docker build --no-cache --network=host \
-    --build-arg smmry_key=$SMMRY_API_KEY  \
+docker build --squash --no-cache --network=host \
     -t docker.uncharted.software/$DOCKER_IMAGE_NAME:${DOCKER_IMAGE_VERSION} -t docker.uncharted.software/$DOCKER_IMAGE_NAME:latest .
 cd ..
 
