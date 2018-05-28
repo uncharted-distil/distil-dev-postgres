@@ -8,6 +8,8 @@ echo $DATASETS
 
 SCHEMA=/datasetDoc.json
 OUTPUT_PATH=features/
+FEATURE_OUTPUT_DATA=features/features.csv
+FEATURE_OUTPUT_SCHEMA=featuresDatasetDoc.json
 DATASET_FOLDER_SUFFIX=_dataset
 HAS_HEADER=1
 FEATURIZE_FUNCTION=fileupload
@@ -26,10 +28,11 @@ do
         --media-path="$DATA_SERVER/${DATASET}" \
         --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
         --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
+        --output-data="$FEATURE_OUTPUT_DATA" \
+        --output-schema="$FEATURE_OUTPUT_SCHEMA" \
         --has-header=$HAS_HEADER
 done
 
-DATA_PATH=/features/features.csv
 MERGED_OUTPUT_PATH=tables/merged.csv
 MERGED_OUTPUT_HEADER_PATH=tables/mergedHeader.csv
 OUTPUT_SCHEMA=mergedDatasetDoc.json
@@ -41,8 +44,8 @@ do
     echo " Merging $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
     ./distil-merge \
-        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/featureDatasetDoc.json" \
-        --data="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$DATA_PATH" \
+        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FEATURE_OUTPUT_SCHEMA" \
+        --data="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FEATURE_OUTPUT_DATA" \
         --raw-data="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/" \
         --output-path="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_PATH" \
         --output-path-relative="$MERGED_OUTPUT_PATH" \
