@@ -19,13 +19,13 @@ do
     echo "--------------------------------------------------------------------------------"
     echo " Featurizing $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
-    go run cmd/distil-featurize/main.go \
+    ./distil-featurize \
         --rest-endpoint="$REST_ENDPOINT" \
         --featurize-function="$FEATURIZE_FUNCTION" \
-        --dataset="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
+        --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
         --media-path="$DATA_SERVER/${DATASET}" \
-        --schema="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
-        --output="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
+        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
+        --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
         --has-header=$HAS_HEADER
 done
 
@@ -41,18 +41,18 @@ do
     echo " Merging $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
     ./distil-merge \
-        --schema="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
-        --data="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$DATA_PATH" \
-        --raw-data="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/" \
-        --output-path="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_PATH" \
+        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/featureDatasetDoc.json" \
+        --data="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$DATA_PATH" \
+        --raw-data="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/" \
+        --output-path="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_PATH" \
         --output-path-relative="$MERGED_OUTPUT_PATH" \
-        --output-path-header="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_HEADER_PATH" \
-        --output-schema-path="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$OUTPUT_SCHEMA" \
+        --output-path-header="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_HEADER_PATH" \
+        --output-schema-path="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$OUTPUT_SCHEMA" \
         --has-header=$MERGE_HAS_HEADER
 done
 
 CLASSIFICATION_OUTPUT_PATH=classification.json
-REST_ENDPOINT=http://localhost:5000
+REST_ENDPOINT=http://127.0.0.1:5000
 CLASSIFICATION_FUNCTION=fileUpload
 
 for DATASET in "${DATASETS[@]}"
@@ -63,12 +63,12 @@ do
     ./distil-classify \
         --rest-endpoint="$REST_ENDPOINT" \
         --classification-function="$CLASSIFICATION_FUNCTION" \
-        --dataset="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_PATH" \
-        --output="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH"
+        --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_PATH" \
+        --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH"
 done
 
 IMPORTANCE_OUTPUT=importance.json
-RANKING_REST_ENDPOINT=HTTP://localhost:5001
+RANKING_REST_ENDPOINT=HTTP://127.0.0.1:5001
 RANKING_FUNCTION=pca
 NUMERIC_OUTPUT_SUFFIX=_numeric.csv
 TYPE_SOURCE=classification
@@ -80,15 +80,15 @@ do
     echo " Ranking $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
     ./distil-rank \
-        --schema="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$OUTPUT_SCHEMA" \
-        --dataset="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_PATH" \
+        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$OUTPUT_SCHEMA" \
+        --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_PATH" \
         --rest-endpoint="$RANKING_REST_ENDPOINT" \
         --ranking-function="$RANKING_FUNCTION" \
-        --ranking-output="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$DATASET$NUMERIC_OUTPUT_SUFFIX" \
-        --classification="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH" \
+        --ranking-output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$DATASET$NUMERIC_OUTPUT_SUFFIX" \
+        --classification="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH" \
         --has-header=$HAS_HEADER \
         --row-limit=$ROW_LIMIT \
-        --output="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$IMPORTANCE_OUTPUT" \
+        --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$IMPORTANCE_OUTPUT" \
         --type-source="$TYPE_SOURCE"
 done
 
@@ -104,12 +104,12 @@ do
     ./distil-summary \
         --rest-endpoint="$SUMMARY_REST_ENDPOINT" \
         --summary-function="$SUMMARY_FUNCTION" \
-        --dataset="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_HEADER_PATH" \
-        --output="$DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SUMMARY_MACHINE_OUTPUT"
+        --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_HEADER_PATH" \
+        --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SUMMARY_MACHINE_OUTPUT"
 done
 
 METADATA_INDEX=datasets
-ES_ENDPOINT=http://localhost:9200
+POSTGRES_HOST=127.0.0.1
 SUMMARY_OUTPUT_PATH=summary.txt
 TYPE_SOURCE=classification
 
@@ -130,5 +130,6 @@ do
         --summary-machine="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SUMMARY_MACHINE_OUTPUT" \
         --importance="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$IMPORTANCE_OUTPUT" \
         --type-source="$TYPE_SOURCE" \
+        --db-host="$POSTGRES_HOST" \
         --clear-existing
 done
