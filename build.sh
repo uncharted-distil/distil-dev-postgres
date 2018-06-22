@@ -36,6 +36,12 @@ do
     cp -r $HOST_DATA_DIR/$DATASET ./server/data/d3m
 done
 
+for DATASET in "${DATASETS_EVAL[@]}"
+do
+    echo "cp $HOST_DATA_DIR_EVAL/$DATASET into ./server/data/d3m/$DATASET"
+    cp -r $HOST_DATA_DIR_EVAL/$DATASET ./server/data/d3m
+done
+
 # start classification REST API container
 docker run -d --rm --name classification_rest -p 5000:5000 primitives.azurecr.io/simon:1.0.0
 ./server/wait-for-it.sh -t 0 localhost:5000
