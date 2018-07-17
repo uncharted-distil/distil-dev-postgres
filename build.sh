@@ -28,7 +28,7 @@ mv distil-rank ./server
 mv distil-ingest ./server
 mv distil-summary ./server
 mv distil-featurize ./server
-mv distil-featurize ./cluster
+mv distil-cluster ./server
 
 # copy the d3m data into the docker context
 echo -e "${HIGHLIGHT}Copying D3M data..${NC}"
@@ -74,5 +74,8 @@ docker stop classification_rest
 
 # stop ranking REST API container
 docker stop ranking_rest
+
+# stop cluster REST API container
+docker stop cluster_rest
 
 echo -e "${HIGHLIGHT}Done${NC}"
