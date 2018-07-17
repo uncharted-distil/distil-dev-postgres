@@ -9,7 +9,7 @@ CLUSTER_OUTPUT_SCHEMA=clustersDatasetDoc.json
 DATASET_FOLDER_SUFFIX=_dataset
 HAS_HEADER=1
 CLUSTER_FUNCTION=fileupload
-REST_ENDPOINT=HTTP://10.108.4.42:5002
+CLUSTER_REST_ENDPOINT=HTTP://localhost:5004
 DATA_SERVER=HTTP://10.108.4.104
 
 for DATASET in "${DATASETS[@]}"
@@ -18,7 +18,7 @@ do
     echo " Clustering $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
     ./distil-cluster \
-        --rest-endpoint="$REST_ENDPOINT" \
+        --rest-endpoint="$CLUSTER_REST_ENDPOINT" \
         --cluster-function="$CLUSTER_FUNCTION" \
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
         --media-path="$DATA_SERVER/${DATASET}" \
