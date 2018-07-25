@@ -28,6 +28,7 @@ ADD distil-rank .
 ADD distil-classify .
 ADD distil-summary .
 ADD distil-featurize .
+ADD distil-cluster .
 ADD ingest.sh .
 
 # copy in d3m test data

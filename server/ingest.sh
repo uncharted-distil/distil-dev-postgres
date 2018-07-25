@@ -2,16 +2,35 @@
 
 source ./config.sh
 
-echo "**************"
-echo $DATA_DIR
-echo $DATASETS
-
 SCHEMA=/datasetDoc.json
 OUTPUT_PATH=features/
-FEATURE_OUTPUT_DATA=features/features.csv
-FEATURE_OUTPUT_SCHEMA=featuresDatasetDoc.json
+CLUSTER_OUTPUT_DATA=clusters/clusters.csv
+CLUSTER_OUTPUT_SCHEMA=clustersDatasetDoc.json
 DATASET_FOLDER_SUFFIX=_dataset
 HAS_HEADER=1
+CLUSTER_FUNCTION=fileupload
+CLUSTER_REST_ENDPOINT=HTTP://127.0.0.1:5004
+DATA_SERVER=HTTP://10.108.4.104
+
+for DATASET in "${DATASETS[@]}"
+do
+    echo "--------------------------------------------------------------------------------"
+    echo " Clustering $DATASET dataset"
+    echo "--------------------------------------------------------------------------------"
+    ./distil-cluster \
+        --rest-endpoint="$CLUSTER_REST_ENDPOINT" \
+        --cluster-function="$CLUSTER_FUNCTION" \
+        --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
+        --media-path="$DATA_SERVER/${DATASET}" \
+        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
+        --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
+        --output-data="$CLUSTER_OUTPUT_DATA" \
+        --output-schema="$CLUSTER_OUTPUT_SCHEMA" \
+        --has-header=$HAS_HEADER
+done
+
+FEATURE_OUTPUT_DATA=features/features.csv
+FEATURE_OUTPUT_SCHEMA=featuresDatasetDoc.json
 FEATURIZE_FUNCTION=fileupload
 REST_ENDPOINT=HTTP://10.108.4.42:5002
 DATA_SERVER=HTTP://10.108.4.104
@@ -26,7 +45,7 @@ do
         --featurize-function="$FEATURIZE_FUNCTION" \
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
         --media-path="$DATA_SERVER/${DATASET}" \
-        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
+        --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_SCHEMA" \
         --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
         --output-data="$FEATURE_OUTPUT_DATA" \
         --output-schema="$FEATURE_OUTPUT_SCHEMA" \
