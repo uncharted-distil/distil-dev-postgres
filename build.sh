@@ -58,7 +58,7 @@ echo "Waiting for the ranking service to be available..."
 sleep 10
 
 # start clustering REST API container
-docker run -d --rm --name cluster_rest -p 5004:5000 unicorn:test
+docker run -d --rm --name cluster_rest -p 5004:5000 registry.datadrivendiscovery.org/uncharted/distil-integration/unicorn-http:dev
 ./server/wait-for-it.sh -t 0 localhost:5004
 echo "Waiting for the clustering service to be available..."
 sleep 10
