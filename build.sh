@@ -58,9 +58,15 @@ echo "Waiting for the ranking service to be available..."
 sleep 10
 
 # start clustering REST API container
-docker run -d --rm --name cluster_rest -p 5004:5000 registry.datadrivendiscovery.org/uncharted/distil-integration/unicorn-http:dev
-./server/wait-for-it.sh -t 0 localhost:5004
+docker run -d --rm --name cluster_rest --volume "/home/ubuntu/datasets:/home/ubuntu/datasets" -p 5005:5005 registry.datadrivendiscovery.org/uncharted/distil-integration/unicorn-http:dev
+./server/wait-for-it.sh -t 0 localhost:5005
 echo "Waiting for the clustering service to be available..."
+sleep 10
+
+# start feature REST API container
+docker run -d --rm --name feature_rest --volume "/home/ubuntu/datasets:/home/ubuntu/datasets" -p 5002:5002 registry.datadrivendiscovery.org/uncharted/distil-integration/croc2:latest
+./server/wait-for-it.sh -t 0 localhost:5002
+echo "Waiting for the feature service to be available..."
 sleep 10
 
 echo -e "${HIGHLIGHT}Building image ${DOCKER_IMAGE_NAME}...${NC}"
@@ -77,5 +83,8 @@ docker stop ranking_rest
 
 # stop cluster REST API container
 docker stop cluster_rest
+
+# stop feature REST API container
+docker stop feature_rest
 
 echo -e "${HIGHLIGHT}Done${NC}"
