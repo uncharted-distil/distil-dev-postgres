@@ -9,8 +9,8 @@ CLUSTER_OUTPUT_SCHEMA=clustersDatasetDoc.json
 DATASET_FOLDER_SUFFIX=_dataset
 HAS_HEADER=1
 CLUSTER_FUNCTION=fileupload
-CLUSTER_REST_ENDPOINT=HTTP://127.0.0.1:5004
-DATA_SERVER=HTTP://10.108.4.104
+CLUSTER_REST_ENDPOINT=HTTP://127.0.0.1:5005
+DATA_LOCATION=/home/ubuntu/datasets/seed_datasets_current
 
 for DATASET in "${DATASETS[@]}"
 do
@@ -21,7 +21,7 @@ do
         --rest-endpoint="$CLUSTER_REST_ENDPOINT" \
         --cluster-function="$CLUSTER_FUNCTION" \
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
-        --media-path="$DATA_SERVER/${DATASET}" \
+        --media-path="$DATA_LOCATION/${DATASET}/TRAIN/dataset_TRAIN/" \
         --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
         --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
         --output-data="$CLUSTER_OUTPUT_DATA" \
@@ -32,8 +32,7 @@ done
 FEATURE_OUTPUT_DATA=features/features.csv
 FEATURE_OUTPUT_SCHEMA=featuresDatasetDoc.json
 FEATURIZE_FUNCTION=fileupload
-REST_ENDPOINT=HTTP://10.108.4.42:5002
-DATA_SERVER=HTTP://10.108.4.104
+REST_ENDPOINT=HTTP://127.0.0.1:5002
 
 for DATASET in "${DATASETS[@]}"
 do
@@ -44,7 +43,7 @@ do
         --rest-endpoint="$REST_ENDPOINT" \
         --featurize-function="$FEATURIZE_FUNCTION" \
         --dataset="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
-        --media-path="$DATA_SERVER/${DATASET}" \
+        --media-path="$DATA_LOCATION/${DATASET}/TRAIN/dataset_TRAIN/" \
         --schema="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_SCHEMA" \
         --output="$CONTAINER_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN" \
         --output-data="$FEATURE_OUTPUT_DATA" \
