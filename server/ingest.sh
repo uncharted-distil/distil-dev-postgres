@@ -132,7 +132,7 @@ done
 METADATA_INDEX=datasets
 POSTGRES_HOST=127.0.0.1
 SUMMARY_OUTPUT_PATH=summary.txt
-TYPE_SOURCE=schema
+TYPE_SOURCE=classification
 
 for DATASET in "${DATASETS[@]}"
 do
