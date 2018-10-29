@@ -33,15 +33,12 @@ mv distil-cluster ./server
 # copy the d3m data into the docker context
 echo -e "${HIGHLIGHT}Copying D3M data..${NC}"
 mkdir -p ./server/data/d3m
-cp -r $HOST_DATA_DIR_COPY ./server/data
+cp -r $OUTPUT_DATA_DIR ./server/data
 
 echo -e "${HIGHLIGHT}Building image ${DOCKER_IMAGE_NAME}...${NC}"
 cd server
 docker build --squash --no-cache --network=host \
     -t docker.uncharted.software/$DOCKER_IMAGE_NAME:${DOCKER_IMAGE_VERSION} -t docker.uncharted.software/$DOCKER_IMAGE_NAME:latest .
 cd ..
-
-# stop pipeline runner
-docker stop pipeline_runner
 
 echo -e "${HIGHLIGHT}Done${NC}"
