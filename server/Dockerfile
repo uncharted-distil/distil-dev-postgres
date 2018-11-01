@@ -39,6 +39,7 @@ COPY data /input
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/e1f115e4ca285c3c24e847c4dd4be955e0ed51c2/wait-for-it.sh /
 RUN /docker-entrypoint.sh postgres & \
   /bin/bash /wait-for-it.sh -t 0 localhost:5432 -- psql -U postgres -f /docker-entrypoint-initdb.d/init.sql; \
+  sleep 60; \
   /distil-ingest/ingest.sh; \
   exit 0;
 
