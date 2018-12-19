@@ -40,7 +40,18 @@ done
 
 rm -rf $OUTPUT_DATA_DIR
 mkdir -p $OUTPUT_DATA_DIR
-docker run -d --rm --name pipeline_runner -p 50051:50051 --env D3MOUTPUTDIR=/output --env STATIC_RESOURCE_PATH=/static_resources -v "/home/ubuntu/datasets:/home/ubuntu/datasets" -v /input:/input -v /output:/output -v /static_resources:/static_resources docker.uncharted.software/distil-pipeline-runner:latest
+docker run \
+    --name pipeline-runner \
+    --rm \
+    -d \
+    -p 50051:50051 \
+    --env D3MOUTPUTDIR=$D3MOUTPUTDIR \
+    --env D3MINPUTDIR=$D3MINPUTDIR \
+    --env STATIC_RESOURCE_PATH=$STATIC_RESOURCE_PATH \
+    -v $D3MINPUTDIR:$D3MINPUTDIR \
+    -v $D3MOUTPUTDIR:$D3MOUTPUTDIR \
+    -v $STATIC_RESOURCE_PATH:$STATIC_RESOURCE_PATH \
+    docker.uncharted.software/$DOCKER_IMAGE_NAME:latest
 echo "Waiting for the pipeline runner to be available..."
 sleep 60
 
@@ -50,7 +61,7 @@ CLUSTER_OUTPUT_DATA=clusters/tables/learningData.csv
 CLUSTER_OUTPUT_SCHEMA=clusters/datasetDoc.json
 HAS_HEADER=1
 PRIMITIVE_ENDPOINT=localhost:50051
-DATA_LOCATION=/input/d3m
+DATA_LOCATION=/tmp/d3m/input
 
 for DATASET in "${DATASETS[@]}"
 do
