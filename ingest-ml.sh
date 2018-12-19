@@ -9,6 +9,7 @@ go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-ingest
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-summary
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-featurize
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-cluster
+go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-geocode
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-merge
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-classify
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-rank
@@ -16,6 +17,7 @@ env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftwa
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-summary
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-featurize
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-cluster
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-geocode
 mv distil-merge ./server
 mv distil-classify ./server
 mv distil-rank ./server
@@ -23,6 +25,7 @@ mv distil-ingest ./server
 mv distil-summary ./server
 mv distil-featurize ./server
 mv distil-cluster ./server
+mv distil-geocode ./server
 
 rm -rf $HOST_DATA_DIR_COPY
 mkdir -p $HOST_DATA_DIR_COPY
@@ -51,7 +54,7 @@ docker run \
     -v $D3MINPUTDIR:$D3MINPUTDIR \
     -v $D3MOUTPUTDIR:$D3MOUTPUTDIR \
     -v $STATIC_RESOURCE_PATH:$STATIC_RESOURCE_PATH \
-    docker.uncharted.software/$DOCKER_IMAGE_NAME:latest
+    docker.uncharted.software/distil-pipeline-runner:latest
 echo "Waiting for the pipeline runner to be available..."
 sleep 60
 
@@ -147,13 +150,37 @@ done
 
 SUMMARY_MACHINE_OUTPUT=summary-machine.json
 
+# Duke fails on large dataset (geolife)
 for DATASET in "${DATASETS[@]}"
 do
     echo "--------------------------------------------------------------------------------"
     echo " Summarizing $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
-    ./server/distil-summary \
+    if [ "$DATASET" == "LL1_336_MS_Geolife_transport_mode_prediction" ];
+    then
+        echo "SKIPPING SUMMARY"
+    else
+        ./server/distil-summary \
+            --endpoint="$PRIMITIVE_ENDPOINT" \
+            --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_DATASET_FOLDER" \
+            --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SUMMARY_MACHINE_OUTPUT"
+    fi
+done
+
+GEO_OUTPUT_FOLDER=geocoded
+GEO_OUTPUT_DATA=geocoded/tables/learningData.csv
+GEO_OUTPUT_SCHEMA=geocoded/datasetDoc.json
+
+for DATASET in "${DATASETS[@]}"
+do
+    echo "--------------------------------------------------------------------------------"
+    echo " Geocoding $DATASET dataset"
+    echo "--------------------------------------------------------------------------------"
+    ./server/distil-geocode \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_DATASET_FOLDER" \
-        --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SUMMARY_MACHINE_OUTPUT"
+        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_SCHEMA" \
+        --classification="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_SCHEMA" \
+        --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$GEO_OUTPUT_FOLDER" \
+        --has-header=$HAS_HEADER
 done
