@@ -54,7 +54,7 @@ docker run \
     -v $D3MINPUTDIR:$D3MINPUTDIR \
     -v $D3MOUTPUTDIR:$D3MOUTPUTDIR \
     -v $STATIC_RESOURCE_PATH:$STATIC_RESOURCE_PATH \
-    docker.uncharted.software/$DOCKER_IMAGE_NAME:latest
+    docker.uncharted.software/distil-pipeline-runner:latest
 echo "Waiting for the pipeline runner to be available..."
 sleep 60
 
