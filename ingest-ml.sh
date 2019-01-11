@@ -48,11 +48,11 @@ docker run \
     --rm \
     -d \
     -p 50051:50051 \
-    --env D3MOUTPUTDIR=$D3MOUTPUTDIR \
-    --env D3MINPUTDIR=$D3MINPUTDIR \
+    --env D3MOUTPUTDIR=$OUTPUT_DATA_DIR \
+    --env D3MINPUTDIR=$HOST_DATA_DIR_COPY \
     --env STATIC_RESOURCE_PATH=$STATIC_RESOURCE_PATH \
-    -v $D3MINPUTDIR:$D3MINPUTDIR \
-    -v $D3MOUTPUTDIR:$D3MOUTPUTDIR \
+    -v $HOST_DATA_DIR_COPY:$HOST_DATA_DIR_COPY \
+    -v $OUTPUT_DATA_DIR:$OUTPUT_DATA_DIR \
     -v $STATIC_RESOURCE_PATH:$STATIC_RESOURCE_PATH \
     docker.uncharted.software/distil-pipeline-runner:latest
 echo "Waiting for the pipeline runner to be available..."
