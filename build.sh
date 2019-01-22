@@ -37,6 +37,7 @@ mv distil-geocode ./server
 echo -e "${HIGHLIGHT}Copying D3M data..${NC}"
 mkdir -p ./server/data
 cp -r $OUTPUT_DATA_DIR ./server/data
+rm -rf ./server/data/d3m
 mv ./server/data/output ./server/data/d3m
 
 echo -e "${HIGHLIGHT}Building image ${DOCKER_IMAGE_NAME}...${NC}"
