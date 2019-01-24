@@ -10,6 +10,7 @@ go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-summary
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-featurize
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-cluster
 go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-geocode
+go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-format
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-merge
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-classify
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-rank
@@ -18,6 +19,7 @@ env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftwa
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-featurize
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-cluster
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-geocode
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-format
 mv distil-merge ./server
 mv distil-classify ./server
 mv distil-rank ./server
@@ -26,6 +28,7 @@ mv distil-summary ./server
 mv distil-featurize ./server
 mv distil-cluster ./server
 mv distil-geocode ./server
+mv distil-format ./server
 
 rm -rf $HOST_DATA_DIR_COPY
 mkdir -p $HOST_DATA_DIR_COPY
@@ -59,12 +62,30 @@ echo "Waiting for the pipeline runner to be available..."
 sleep 60
 
 SCHEMA=/datasetDoc.json
-CLUSTER_OUTPUT_FOLDER=clusters
-CLUSTER_OUTPUT_DATA=clusters/tables/learningData.csv
-CLUSTER_OUTPUT_SCHEMA=clusters/datasetDoc.json
+FORMAT_OUTPUT_FOLDER=format
+FORMAT_OUTPUT_DATA=format/tables/learningData.csv
+FORMAT_OUTPUT_SCHEMA=format/datasetDoc.json
 HAS_HEADER=1
 PRIMITIVE_ENDPOINT=localhost:50051
 DATA_LOCATION=/tmp/d3m/input
+
+for DATASET in "${DATASETS[@]}"
+do
+    echo "--------------------------------------------------------------------------------"
+    echo " FORMATTING $DATASET dataset"
+    echo "--------------------------------------------------------------------------------"
+    ./server/distil-format \
+        --endpoint="$PRIMITIVE_ENDPOINT" \
+        --dataset="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
+        --schema="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
+        --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_FOLDER" \
+        --output-schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_SCHEMA" \
+        --has-header=$HAS_HEADER
+done
+
+CLUSTER_OUTPUT_FOLDER=clusters
+CLUSTER_OUTPUT_DATA=clusters/tables/learningData.csv
+CLUSTER_OUTPUT_SCHEMA=clusters/datasetDoc.json
 
 for DATASET in "${DATASETS[@]}"
 do
@@ -73,9 +94,9 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-cluster \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
+        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_SCHEMA" \
         --media-path="$DATA_LOCATION/${DATASET}/TRAIN/dataset_TRAIN/" \
-        --schema="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_SCHEMA" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_FOLDER" \
         --output-schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_SCHEMA" \
         --has-header=$HAS_HEADER
