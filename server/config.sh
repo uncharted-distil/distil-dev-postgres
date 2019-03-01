@@ -29,3 +29,6 @@ OUTPUT_DATA_DIR=/tmp/d3m/output
 
 # D3M static models directory
 STATIC_RESOURCE_PATH=/data/static_resources
+
+# address of the docker repo
+DOCKER_REPO=docker.uncharted.software
