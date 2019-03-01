@@ -46,7 +46,7 @@ mv ./server/data/output ./server/data/d3m
 echo -e "${HIGHLIGHT}Building image ${DOCKER_IMAGE_NAME}...${NC}"
 cd server
 docker build --squash --no-cache --network=host \
-    -t docker.uncharted.software/$DOCKER_IMAGE_NAME:${DOCKER_IMAGE_VERSION} -t docker.uncharted.software/$DOCKER_IMAGE_NAME:latest .
+    -t $DOCKER_REPO/$DOCKER_IMAGE_NAME:${DOCKER_IMAGE_VERSION} -t $DOCKER_REPO/$DOCKER_IMAGE_NAME:latest .
 cd ..
 
 echo -e "${HIGHLIGHT}Done${NC}"

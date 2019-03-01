@@ -6,5 +6,5 @@ docker run \
   -p 5432:5432 \
   --rm \
   --name $DOCKER_IMAGE_NAME \
-  docker.uncharted.software/$DOCKER_IMAGE_NAME:${DOCKER_IMAGE_VERSION} \
+  $DOCKER_REPO/$DOCKER_IMAGE_NAME:${DOCKER_IMAGE_VERSION} \
   -d postgres

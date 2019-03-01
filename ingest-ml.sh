@@ -58,7 +58,7 @@ docker run \
     -v $HOST_DATA_DIR_COPY:$HOST_DATA_DIR_COPY \
     -v $OUTPUT_DATA_DIR:$OUTPUT_DATA_DIR \
     -v $STATIC_RESOURCE_PATH:$STATIC_RESOURCE_PATH \
-    docker.uncharted.software/distil-pipeline-runner:latest
+    $DOCKER_REPO/distil-pipeline-runner:latest
 echo "Waiting for the pipeline runner to be available..."
 sleep 60
 
