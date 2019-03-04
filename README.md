@@ -1,6 +1,6 @@
 # distil-dev-postgres
 
-Provides a dockerfile and supporting scripts to generate images containing Postgres.  The image build step uses [distil-ingest](https://github.com/unchartedsoftware/distil-ingest) to build a [distil](https://github.com/unchartedsoftware/distil)-ready index from source data; this index is saved as part of the image, allowing for generation of drop-in test container that can be run locally.
+Provides a dockerfile and supporting scripts to generate images containing Postgres.  The image build step uses [distil-ingest](https://github.com/uncharted-distil/distil-ingest) to build a [distil](https://github.com/uncharted-distil/distil)-ready index from source data; this index is saved as part of the image, allowing for generation of drop-in test container that can be run locally.
 
 ## Dependencies
 

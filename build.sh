@@ -8,24 +8,24 @@ NC='\033[0m'
 echo -e "${HIGHLIGHT}Getting distil-ingest..${NC}"
 
 # get distil-ingest and force a static rebuild of it so that it can run on Alpine
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-merge
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-classify
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-rank
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-ingest
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-summary
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-featurize
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-cluster
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-geocode
-go get -u -v github.com/unchartedsoftware/distil-ingest/cmd/distil-format
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-merge
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-classify
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-rank
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-ingest
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-summary
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-featurize
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-cluster
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-geocode
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/unchartedsoftware/distil-ingest/cmd/distil-format
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-merge
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-classify
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-rank
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-ingest
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-summary
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-featurize
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-cluster
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-geocode
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-format
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-merge
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-classify
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-rank
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-ingest
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-summary
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-featurize
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-cluster
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-geocode
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-format
 mv distil-merge ./server
 mv distil-classify ./server
 mv distil-rank ./server
