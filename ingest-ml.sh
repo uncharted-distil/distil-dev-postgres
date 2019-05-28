@@ -44,6 +44,12 @@ do
     cp -r $HOST_DATA_DIR_EVAL/$DATASET $HOST_DATA_DIR_COPY
 done
 
+for DATASET in "${DATASETS_DA[@]}"
+do
+    echo "cp $HOST_DATA_DIR_DA/$DATASET into $HOST_DATA_DIR_COPY/$DATASET"
+    cp -r $HOST_DATA_DIR_DA/$DATASET $HOST_DATA_DIR_COPY
+done
+
 rm -rf $OUTPUT_DATA_DIR
 mkdir -p $OUTPUT_DATA_DIR
 docker run \
@@ -53,11 +59,11 @@ docker run \
     -p 50051:50051 \
     --env D3MOUTPUTDIR=$OUTPUT_DATA_DIR \
     --env D3MINPUTDIR=$HOST_DATA_DIR_COPY \
-    --env STATIC_RESOURCE_PATH=$STATIC_RESOURCE_PATH \
+    --env D3MSTATICDIR=$D3MSTATICDIR \
     --env VERBOSE_PRIMITIVE_OUTPUT=true \
     -v $HOST_DATA_DIR_COPY:$HOST_DATA_DIR_COPY \
     -v $OUTPUT_DATA_DIR:$OUTPUT_DATA_DIR \
-    -v $STATIC_RESOURCE_PATH:$STATIC_RESOURCE_PATH \
+    -v $D3MSTATICDIR:$D3MSTATICDIR \
     $DOCKER_REPO/distil-pipeline-runner:latest
 echo "Waiting for the pipeline runner to be available..."
 sleep 60
