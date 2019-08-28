@@ -11,6 +11,7 @@ go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-featurize
 go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-cluster
 go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-geocode
 go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-format
+go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-clean
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-merge
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-classify
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-rank
@@ -20,6 +21,7 @@ env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-disti
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-cluster
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-geocode
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-format
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-clean
 mv distil-merge ./server
 mv distil-classify ./server
 mv distil-rank ./server
@@ -29,6 +31,7 @@ mv distil-featurize ./server
 mv distil-cluster ./server
 mv distil-geocode ./server
 mv distil-format ./server
+mv distil-clean ./server
 
 rm -rf $HOST_DATA_DIR_COPY
 mkdir -p $HOST_DATA_DIR_COPY
@@ -150,6 +153,20 @@ do
         --has-header=$MERGE_HAS_HEADER
 done
 
+CLEANING_OUTPUT_SCHEMA=clean/datasetDoc.json
+CLEANING_DATASET_FOLDER=clean
+
+for DATASET in "${DATASETS[@]}"
+do
+    echo "--------------------------------------------------------------------------------"
+    echo " Cleaning $DATASET dataset"
+    echo "--------------------------------------------------------------------------------"
+    ./server/distil-clean \
+        --endpoint="$PRIMITIVE_ENDPOINT" \
+        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_SCHEMA" \
+        --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER"
+done
+
 CLASSIFICATION_OUTPUT_PATH=classification.json
 
 for DATASET in "${DATASETS[@]}"
@@ -159,7 +176,7 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-classify \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_DATASET_FOLDER" \
+        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH"
 done
 
@@ -172,7 +189,7 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-rank \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_DATASET_FOLDER" \
+        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$IMPORTANCE_OUTPUT"
 done
 
@@ -184,13 +201,13 @@ do
     echo "--------------------------------------------------------------------------------"
     echo " Summarizing $DATASET dataset"
     echo "--------------------------------------------------------------------------------"
-    if [ "$DATASET" == "LL1_336_MS_Geolife_transport_mode_prediction" ];
+    if [ "$DATASET" == "LL1_336_MS_Geolife_transport_mode_prediction_separate_lat_lon" ];
     then
         echo "SKIPPING SUMMARY"
     else
         ./server/distil-summary \
             --endpoint="$PRIMITIVE_ENDPOINT" \
-            --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_DATASET_FOLDER" \
+            --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER" \
             --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SUMMARY_MACHINE_OUTPUT"
     fi
 done
@@ -206,9 +223,9 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-geocode \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_SCHEMA" \
+        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_OUTPUT_SCHEMA" \
         --classification="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH" \
-        --schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_SCHEMA" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_OUTPUT_SCHEMA" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$GEO_OUTPUT_FOLDER" \
         --has-header=$HAS_HEADER
 done
