@@ -56,18 +56,18 @@ done
 rm -rf $OUTPUT_DATA_DIR
 mkdir -p $OUTPUT_DATA_DIR
 docker run \
-    --name pipeline-runner \
+    --name distil-auto-ml \
     --rm \
     -d \
-    -p 50051:50051 \
+    -p 45042:45042 \
     --env D3MOUTPUTDIR=$OUTPUT_DATA_DIR \
     --env D3MINPUTDIR=$HOST_DATA_DIR_COPY \
     --env D3MSTATICDIR=$D3MSTATICDIR \
-    --env VERBOSE_PRIMITIVE_OUTPUT=true \
+    --env PROGRESS_INTERVAL=60 \
     -v $HOST_DATA_DIR_COPY:$HOST_DATA_DIR_COPY \
     -v $OUTPUT_DATA_DIR:$OUTPUT_DATA_DIR \
     -v $D3MSTATICDIR:$D3MSTATICDIR \
-    $DOCKER_REPO/distil-pipeline-runner:latest
+    registry.datadrivendiscovery.org/uncharted/distil-integration/distil-auto-ml:latest
 echo "Waiting for the pipeline runner to be available..."
 sleep 60
 
@@ -76,7 +76,7 @@ FORMAT_OUTPUT_FOLDER=format
 FORMAT_OUTPUT_DATA=format/tables/learningData.csv
 FORMAT_OUTPUT_SCHEMA=format/datasetDoc.json
 HAS_HEADER=1
-PRIMITIVE_ENDPOINT=localhost:50051
+PRIMITIVE_ENDPOINT=localhost:45042
 DATA_LOCATION=/tmp/d3m/input
 
 for DATASET in "${DATASETS[@]}"
