@@ -8,33 +8,26 @@ NC='\033[0m'
 echo -e "${HIGHLIGHT}Getting distil-ingest..${NC}"
 
 # get distil-ingest and force a static rebuild of it so that it can run on Alpine
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-merge
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-classify
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-rank
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-ingest
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-summary
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-featurize
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-cluster
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-geocode
-go get -u -v github.com/uncharted-distil/distil-ingest/cmd/distil-format
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-merge
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-classify
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-rank
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-ingest
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-summary
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-featurize
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-cluster
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-geocode
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a github.com/uncharted-distil/distil-ingest/cmd/distil-format
-mv distil-merge ./server
-mv distil-classify ./server
-mv distil-rank ./server
-mv distil-ingest ./server
-mv distil-summary ./server
-mv distil-featurize ./server
-mv distil-cluster ./server
-mv distil-geocode ./server
-mv distil-format ./server
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-merge@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-classify@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-rank@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-ingest@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-summary@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-featurize@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-cluster@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-geocode@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-format@$BRANCH
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go get -a -v github.com/uncharted-distil/distil-ingest/cmd/distil-clean@$BRANCH
+mv $GOPATH/bin/distil-merge ./server
+mv $GOPATH/bin/distil-classify ./server
+mv $GOPATH/bin/distil-rank ./server
+mv $GOPATH/bin/distil-ingest ./server
+mv $GOPATH/bin/distil-summary ./server
+mv $GOPATH/bin/distil-featurize ./server
+mv $GOPATH/bin/distil-cluster ./server
+mv $GOPATH/bin/distil-geocode ./server
+mv $GOPATH/bin/distil-format ./server
+mv $GOPATH/bin/distil-clean ./server
 
 # copy the d3m data into the docker context
 echo -e "${HIGHLIGHT}Copying D3M data..${NC}"
