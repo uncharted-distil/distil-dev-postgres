@@ -62,27 +62,9 @@ echo "Waiting for the pipeline runner to be available..."
 sleep 60
 
 SCHEMA=/datasetDoc.json
-FORMAT_OUTPUT_FOLDER=format
-FORMAT_OUTPUT_DATA=format/tables/learningData.csv
-FORMAT_OUTPUT_SCHEMA=format/datasetDoc.json
 HAS_HEADER=1
 PRIMITIVE_ENDPOINT=localhost:45042
 DATA_LOCATION=/tmp/d3m/input
-
-for DATASET in "${DATASETS[@]}"
-do
-    echo "--------------------------------------------------------------------------------"
-    echo " FORMATTING $DATASET dataset"
-    echo "--------------------------------------------------------------------------------"
-    ./server/distil-format \
-        --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
-        --schema="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
-        --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_FOLDER" \
-        --output-schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_SCHEMA" \
-        --has-header=$HAS_HEADER
-done
-
 CLUSTER_OUTPUT_FOLDER=clusters
 CLUSTER_OUTPUT_DATA=clusters/tables/learningData.csv
 CLUSTER_OUTPUT_SCHEMA=clusters/datasetDoc.json
@@ -94,9 +76,10 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-cluster \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_SCHEMA" \
+        --dataset="${DATASET}" \
         --media-path="$DATA_LOCATION/${DATASET}/TRAIN/dataset_TRAIN/" \
-        --schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_SCHEMA" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --schema="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_FOLDER" \
         --output-schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_SCHEMA" \
         --has-header=$HAS_HEADER
@@ -113,9 +96,10 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-featurize \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_SCHEMA" \
+        --dataset="${DATASET}" \
         --media-path="$DATA_LOCATION/${DATASET}/TRAIN/dataset_TRAIN/" \
-        --schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLUSTER_OUTPUT_SCHEMA" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/$CLUSTER_OUTPUT_SCHEMA" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FEATURE_OUTPUT_FOLDER" \
         --has-header=$HAS_HEADER
 done
@@ -134,13 +118,31 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-merge \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FEATURE_OUTPUT_SCHEMA" \
+        --dataset="${DATASET}" \
         --raw-data="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/$FEATURE_OUTPUT_SCHEMA" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_DATASET_FOLDER" \
-        --output-path-relative="$MERGED_OUTPUT_PATH_RELATIVE" \
-        --output-path-header="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_HEADER_PATH" \
-        --output-schema-path="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_SCHEMA" \
         --has-header=$MERGE_HAS_HEADER
+done
+
+FORMAT_OUTPUT_FOLDER=format
+FORMAT_OUTPUT_DATA=format/tables/learningData.csv
+FORMAT_OUTPUT_SCHEMA=format/datasetDoc.json
+
+for DATASET in "${DATASETS[@]}"
+do
+    echo "--------------------------------------------------------------------------------"
+    echo " FORMATTING $DATASET dataset"
+    echo "--------------------------------------------------------------------------------"
+    ./server/distil-format \
+        --endpoint="$PRIMITIVE_ENDPOINT" \
+        --dataset="${DATASET}" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/$MERGED_OUTPUT_SCHEMA" \
+        --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_FOLDER" \
+        --output-schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$FORMAT_OUTPUT_SCHEMA" \
+        --has-header=$HAS_HEADER
 done
 
 CLEANING_OUTPUT_SCHEMA=clean/datasetDoc.json
@@ -153,7 +155,9 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-clean \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$MERGED_OUTPUT_SCHEMA" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/$FORMAT_OUTPUT_SCHEMA" \
+        --dataset="${DATASET}" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER"
 done
 
@@ -166,7 +170,9 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-classify \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/$CLEANING_OUTPUT_SCHEMA" \
+        --dataset="${DATASET}" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH"
 done
 
@@ -179,7 +185,9 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-rank \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/$CLEANING_OUTPUT_SCHEMA" \
+        --dataset="${DATASET}" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$IMPORTANCE_OUTPUT"
 done
 
@@ -197,7 +205,9 @@ do
     else
         ./server/distil-summary \
             --endpoint="$PRIMITIVE_ENDPOINT" \
-            --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_DATASET_FOLDER" \
+            --input="$HOST_DATA_DIR_COPY" \
+            --schema="$OUTPUT_DATA_DIR/${DATASET}/$CLEANING_OUTPUT_SCHEMA" \
+            --dataset="${DATASET}" \
             --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$SUMMARY_MACHINE_OUTPUT"
     fi
 done
@@ -213,9 +223,10 @@ do
     echo "--------------------------------------------------------------------------------"
     ./server/distil-geocode \
         --endpoint="$PRIMITIVE_ENDPOINT" \
-        --dataset="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_OUTPUT_SCHEMA" \
-        --classification="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLASSIFICATION_OUTPUT_PATH" \
-        --schema="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$CLEANING_OUTPUT_SCHEMA" \
+        --input="$HOST_DATA_DIR_COPY" \
+        --dataset="${DATASET}" \
+        --classification="$OUTPUT_DATA_DIR/${DATASET}/$CLASSIFICATION_OUTPUT_PATH" \
+        --schema="$OUTPUT_DATA_DIR/${DATASET}/$CLEANING_OUTPUT_SCHEMA" \
         --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$GEO_OUTPUT_FOLDER" \
         --has-header=$HAS_HEADER
 done
