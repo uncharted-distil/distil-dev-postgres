@@ -71,6 +71,8 @@ RUN /docker-entrypoint.sh postgres & \
 # remove ingest related files
 WORKDIR /
 RUN rm -r -f /distil-ingest && rm /wait-for-it.sh && rm -r -f /input
+RUN apk del gdal-dev gdal go
+RUN rm -rf /root
 
 # expose standard ports
 EXPOSE 5432
