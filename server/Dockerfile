@@ -1,5 +1,5 @@
 # Set the base image to postgres alpine
-FROM postgres:13-alpine
+FROM docker-hub.uncharted.software/postgres:13-alpine
 
 # Update postgres to use a new data folder.
 RUN mkdir -p /usr/local/pgsql/data
