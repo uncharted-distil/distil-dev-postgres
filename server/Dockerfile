@@ -100,8 +100,8 @@ RUN env GOOS=linux GOARCH=amd64 go get -a -v github.com/uncharted-distil/distil-
 RUN cp ~/go/bin/distil-ingest ./distil-ingest
 
 # copy in d3m test data
-RUN mkdir -p /input
-COPY data /input
+RUN mkdir -p /tmp/d3m
+COPY data /tmp/d3m
 
 # start postgres and run ingest
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/e1f115e4ca285c3c24e847c4dd4be955e0ed51c2/wait-for-it.sh /

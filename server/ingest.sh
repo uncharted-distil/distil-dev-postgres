@@ -2,8 +2,8 @@
 
 source ./config.sh
 
-GEOCODED_OUTPUT_PATH=geocoded/tables/learningData.csv
-OUTPUT_SCHEMA=geocoded/datasetDoc.json
+FINAL_OUTPUT_PATH=TRAIN/dataset_TRAIN/tables/learningData.csv
+OUTPUT_SCHEMA=TRAIN/dataset_TRAIN/datasetDoc.json
 CLASSIFICATION_OUTPUT_PATH=classification.json
 IMPORTANCE_OUTPUT=importance.json
 SUMMARY_MACHINE_OUTPUT=summary-machine.json
@@ -23,7 +23,7 @@ do
         --db-password=gopher! \
         --dataset-folder="$DATASET" \
         --schema="$CONTAINER_DATA_DIR/${DATASET}/$OUTPUT_SCHEMA" \
-        --dataset="$CONTAINER_DATA_DIR/${DATASET}/$GEOCODED_OUTPUT_PATH" \
+        --dataset="$CONTAINER_DATA_DIR/${DATASET}/$FINAL_OUTPUT_PATH" \
         --classification="$CLASSIFICATION_OUTPUT_PATH" \
         --summary="$SUMMARY_OUTPUT_PATH" \
         --summary-machine="$SUMMARY_MACHINE_OUTPUT" \

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+sleep 180
 set -e
 
 # Perform all actions as $POSTGRES_USER
