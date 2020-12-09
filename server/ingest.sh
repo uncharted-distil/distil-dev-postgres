@@ -2,8 +2,8 @@
 
 source ./config.sh
 
-FINAL_OUTPUT_PATH=TRAIN/dataset_TRAIN/tables/learningData.csv
-OUTPUT_SCHEMA=TRAIN/dataset_TRAIN/datasetDoc.json
+FINAL_OUTPUT_PATH=dataset_TRAIN/tables/learningData.csv
+OUTPUT_SCHEMA=dataset_TRAIN/datasetDoc.json
 CLASSIFICATION_OUTPUT_PATH=classification.json
 IMPORTANCE_OUTPUT=importance.json
 SUMMARY_MACHINE_OUTPUT=summary-machine.json

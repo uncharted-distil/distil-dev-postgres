@@ -197,6 +197,8 @@ do
 #        --dataset="${DATASET}" \
 #        --schema="$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN/$SCHEMA" \
 #        --output="$OUTPUT_DATA_DIR/${DATASET}/TRAIN/dataset_TRAIN/$GEO_OUTPUT_FOLDER"
+    # copy the data to the right path for ingest, and also copy it so that the dataset folder gets set properly on ingest
     mkdir -p "$OUTPUT_DATA_DIR/${DATASET}/TRAIN"
     cp -r "$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN" "$OUTPUT_DATA_DIR/${DATASET}/TRAIN/"
+    cp -r "$HOST_DATA_DIR_COPY/${DATASET}/TRAIN/dataset_TRAIN" "$OUTPUT_DATA_DIR/${DATASET}/"
 done
