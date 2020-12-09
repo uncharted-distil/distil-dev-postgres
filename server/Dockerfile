@@ -109,8 +109,6 @@ RUN chmod 777 /wait-for-it.sh
 RUN /docker-entrypoint.sh postgres & \
   sleep 60; /distil-ingest/ingest.sh
 
-RUN /docker-entrypoint-initdb.d/postgis.sh
-
 # remove ingest related files
 WORKDIR /
 RUN rm -r -f /distil-ingest && rm /wait-for-it.sh && rm -r -f /input
